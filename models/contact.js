@@ -16,6 +16,10 @@ const { Schema, model } = require("mongoose");
         type: Boolean,
         default: false,
       },
+      owner: {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+      },
     },
     { versionKey: false, timestamps: true }
   );

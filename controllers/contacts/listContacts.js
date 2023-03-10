@@ -1,19 +1,25 @@
 const { Contact } = require("../../models/contact");
 
 const listContacts = async (req, res, next) => {
-  try {
-    const contacts = await Contact.find();
-    
-    res.json({
-    status: 'success',
-    code: 200,
-    data: {
-      contacts,
-    },
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+  const { _id } = req.user;
+  const { page = 1, limit = 30, favorite = false } = req.query;
+  const skip = (page - 1) * limit;
+
+  let searchParams;
+  favorite === "true"
+    ? (searchParams = { favorite: true, owner: _id })
+    : (searchParams = { owner: _id });
+
+  const result = await Contact.find({ ...searchParams }, "", {
+    skip,
+    limit: Number(limit),
+  });
+
+  res.status(201).json({
+    status: "succes",
+    code: 201,
+    result,
+  });
+};
 
 module.exports = listContacts;
