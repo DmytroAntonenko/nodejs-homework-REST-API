@@ -1,5 +1,6 @@
 const { User } = require("../../models/user");
 const createError = require("http-errors");
+const gravatar = require("gravatar");
 
 const signUp = async (req, res) => {
   const { name, email, password } = req.body;
@@ -7,7 +8,8 @@ const signUp = async (req, res) => {
   if (user) {
     throw createError(409, `This ${email} is already in use`);
   }
-  const newUser = new User({ name, email, password });
+  const avatarURL = gravatar.url(email);
+  const newUser = new User({ name, email, avatarURL });
   newUser.setPassword(password);
   newUser.save();
 
@@ -17,6 +19,7 @@ const signUp = async (req, res) => {
     data: {
       user: {
         email,
+        avatarURL,
         subscription: "starter",
       },
     },
